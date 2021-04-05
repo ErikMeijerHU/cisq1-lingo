@@ -41,7 +41,8 @@ class FeedbackTest {
         //Act (when)
         Feedback feedback = new Feedback("woord", List.of(Mark.INVALID, Mark.INVALID, Mark.INVALID, Mark.INVALID, Mark.INVALID));
         //Assert (then)
-        assertTrue(feedback.isGuessInvalid());
+//        assertTrue(feedback.isGuessInvalid());
+        assertTrue(false);
     }
 
     @Test
