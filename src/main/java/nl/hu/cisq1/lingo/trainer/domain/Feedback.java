@@ -25,10 +25,11 @@ public class Feedback {
 
     public List<Character> giveHint(List<Character> previousHint, String answer){
         List<Character> hint = new ArrayList<Character>();
-        for (int i = 0; i < answer.length(); i++){
+        for (int i = 0; i < answer.length() ; i++){
             if(marks.get(i) == Mark.CORRECT){
                 hint.add(attempt.charAt(i));
             }
+
             else if(previousHint.get(i) != '.'){
                 hint.add(previousHint.get(i));
             }
@@ -39,25 +40,29 @@ public class Feedback {
         return hint;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Feedback feedback = (Feedback) o;
-        return Objects.equals(attempt, feedback.attempt) &&
-                Objects.equals(marks, feedback.marks);
+    public List<Mark> getMarks() {
+        return marks;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(attempt, marks);
-    }
-
-    @Override
-    public String toString() {
-        return "Feedback{" +
-                "attempt='" + attempt + '\'' +
-                ", marks=" + marks +
-                '}';
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        Feedback feedback = (Feedback) o;
+//        return Objects.equals(attempt, feedback.attempt) &&
+//                Objects.equals(marks, feedback.marks);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(attempt, marks);
+//    }
+//
+//    @Override
+//    public String toString() {
+//        return "Feedback{" +
+//                "attempt='" + attempt + '\'' +
+//                ", marks=" + marks +
+//                '}';
+//    }
 }
