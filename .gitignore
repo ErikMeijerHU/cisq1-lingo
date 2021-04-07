@@ -31,3 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
+/src/main/java/nl/hu/cisq1/lingo/trainer/domain/Test.java
