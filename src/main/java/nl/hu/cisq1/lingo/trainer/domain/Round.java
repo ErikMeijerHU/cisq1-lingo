@@ -82,7 +82,11 @@ public class Round {
         return feedbackList;
     }
 
-//    @Override
+    public int getAttempts() {
+        return attempts;
+    }
+
+    //    @Override
 //    public boolean equals(Object o) {
 //        if (this == o) return true;
 //        if (o == null || getClass() != o.getClass()) return false;

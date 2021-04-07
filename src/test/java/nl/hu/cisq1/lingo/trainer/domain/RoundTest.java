@@ -59,7 +59,7 @@ class RoundTest {
         round.guess("stoel");
         Feedback feedback = round.getFeedbackList().get(round.getFeedbackList().size()-1);
 
-        assertFalse(feedback.getMarks().contains(Mark.INVALID) || feedback.getMarks().contains(Mark.ABSENT) ||feedback.getMarks().contains(Mark.PRESENT));
+        assertTrue(feedback.isWordGuessed());
     }
 
     @Test
