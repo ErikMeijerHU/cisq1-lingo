@@ -83,7 +83,7 @@ class GameTest {
     }
 
     @Test
-    @DisplayName("new round can be started when previous round has ended by losing")
+    @DisplayName("new round can't be started when previous round has ended by losing")
     void newRoundAferLose() throws MaxGuessesReachedException {
         game.startGame("stoel");
         game.guess("staal");
@@ -91,7 +91,7 @@ class GameTest {
         game.guess("staal");
         game.guess("staal");
         game.guess("staal");
-        assertDoesNotThrow(() -> game.newRound("schoen"));
+        assertThrows(NoOngoingGameException.class,() -> game.newRound("schoen"));
     }
 
     @Test

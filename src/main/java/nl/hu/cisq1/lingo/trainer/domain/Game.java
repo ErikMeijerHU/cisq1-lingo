@@ -29,7 +29,7 @@ public class Game {
         }
     }
 
-    public void checkGameState(){
+    public Status checkGameState(){
         if(round.getFeedbackList().get(round.getFeedbackList().size()-1).isWordGuessed()){
             this.status = Status.WAITING_FOR_ROUND;
             progress.calculateScore(round.getAttempts());
@@ -40,15 +40,19 @@ public class Game {
         else {
             this.status = Status.PLAYING;
         }
+        return this.status;
     }
 
     public void newRound(String correctWord) {
-        if(status == Status.WAITING_FOR_ROUND || status == Status.ELIMINATED){
+        if(status == Status.WAITING_FOR_ROUND){
             round = new Round(correctWord);
             progress.nextRound();
             status = Status.PLAYING;
-        }else {
+        }else if(status == Status.PLAYING) {
             throw new OngoingRoundException();
+        }
+        else {
+            throw new NoOngoingGameException();
         }
     }
 
