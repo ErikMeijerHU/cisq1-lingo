@@ -33,7 +33,7 @@ class GameTest {
     void guessWithOngoingGame() throws MaxGuessesReachedException {
         game.startGame("stoel");
         game.guess("staal");
-        assertEquals(Arrays.asList('s','t','.','.','l'), game.getRound().getCurrentHint());
+        assertEquals(Arrays.asList('s','t','.','.','l'), game.getRounds().get(game.getRounds().size()-1).getCurrentHint());
     }
 
     @Test

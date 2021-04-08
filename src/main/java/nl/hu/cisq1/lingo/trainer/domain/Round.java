@@ -3,16 +3,25 @@ package nl.hu.cisq1.lingo.trainer.domain;
 import nl.hu.cisq1.lingo.trainer.domain.enums.Mark;
 import nl.hu.cisq1.lingo.trainer.domain.exception.MaxGuessesReachedException;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table(name = "round")
 public class Round {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
     private String correctWord;
     private int attempts;
-
+    @ElementCollection
     private List<Character> currentHint = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Feedback> feedbackList = new ArrayList<>();
 
     public Round(String correctWord) {
@@ -21,6 +30,10 @@ public class Round {
         for (int i = 0; i < correctWord.length() -1; i++){
             currentHint.add('.');
         }
+    }
+
+    public Round(){
+        //empty constructor for spring
     }
 
     public void guess(String attempt) throws MaxGuessesReachedException {

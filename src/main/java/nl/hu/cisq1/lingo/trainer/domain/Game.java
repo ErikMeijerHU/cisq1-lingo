@@ -5,27 +5,40 @@ import nl.hu.cisq1.lingo.trainer.domain.exception.MaxGuessesReachedException;
 import nl.hu.cisq1.lingo.trainer.domain.exception.NoOngoingGameException;
 import nl.hu.cisq1.lingo.trainer.domain.exception.OngoingRoundException;
 
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "game")
 public class Game {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    @Enumerated(EnumType.STRING)
     private Status status = Status.WAITING_FOR_ROUND;
-    private Round round;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Round> rounds = new ArrayList<>();
+
     private int score;
     private int wordLength = 5;
     private int roundNumber = 0;
 
     public Game() {
-        //TODO add comment here
+        //empty constructor for spring
     }
 
     public void startGame(String correctWord){
         this.status = Status.PLAYING;
-        this.round = new Round(correctWord);
+        this.rounds.add(new Round(correctWord));
         roundNumber++;
         this.wordLength = correctWord.length();
     }
 
     public void guess(String attempt) throws MaxGuessesReachedException {
         if(status == Status.PLAYING) {
-            round.guess(attempt);
+            rounds.get(rounds.size()-1).guess(attempt);
             checkGameState();
         }
         else {
@@ -34,11 +47,11 @@ public class Game {
     }
 
     public Status checkGameState(){
-        if(round.getFeedbackList().get(round.getFeedbackList().size()-1).isWordGuessed()){
+        if(rounds.get(rounds.size()-1).getFeedbackList().get(rounds.get(rounds.size()-1).getFeedbackList().size()-1).isWordGuessed()){
             this.status = Status.WAITING_FOR_ROUND;
-            calculateScore(round.getAttempts());
+            calculateScore(rounds.get(rounds.size()-1).getAttempts());
         }
-        else if (round.getAttempts()>=5){
+        else if (rounds.get(rounds.size()-1).getAttempts()>=5){
             this.status = Status.ELIMINATED;
         }
         else {
@@ -49,7 +62,7 @@ public class Game {
 
     public void newRound(String correctWord) {
         if(status == Status.WAITING_FOR_ROUND){
-            round = new Round(correctWord);
+            rounds.add(new Round(correctWord));
             nextRound();
             status = Status.PLAYING;
         }else if(status == Status.PLAYING) {
@@ -70,8 +83,8 @@ public class Game {
         else {wordLength =5;}
     }
 
-    public Round getRound() {
-        return round;
+    public List<Round> getRounds() {
+        return rounds;
     }
 
     public Status getStatus() {
