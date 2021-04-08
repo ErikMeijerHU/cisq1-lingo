@@ -1,14 +1,12 @@
 package nl.hu.cisq1.lingo.trainer.presentation.dto;
 
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+
 import nl.hu.cisq1.lingo.trainer.domain.Feedback;
 
 import java.util.List;
 import java.util.Objects;
 
-@EqualsAndHashCode
-@ToString
+
 public class GameDTO {
     public Long id;
     public int score;
