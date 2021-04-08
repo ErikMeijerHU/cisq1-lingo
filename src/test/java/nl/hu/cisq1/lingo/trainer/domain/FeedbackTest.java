@@ -1,6 +1,7 @@
 package nl.hu.cisq1.lingo.trainer.domain;
 
 import nl.hu.cisq1.lingo.trainer.domain.enums.Mark;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -61,6 +62,19 @@ class FeedbackTest {
         assertFalse(feedback.isGuessInvalid());
     }
 
+    @Test
+    @DisplayName("equals tested by EqualsVerifier")
+    void equalsTrue(){
+        EqualsVerifier.simple().forClass(Feedback.class).verify();
+    }
+
+    @Test
+    @DisplayName("toString should return a formatted string")
+    void formattedString(){
+        Feedback feedback = new Feedback("woord", List.of(Mark.ABSENT, Mark.CORRECT, Mark.CORRECT, Mark.CORRECT, Mark.CORRECT));
+        assertEquals(feedback.toString(), "Feedback{id=null, attempt='woord', marks=[ABSENT, CORRECT, CORRECT, CORRECT, CORRECT]}");
+    }
+
     @ParameterizedTest
     @MethodSource("provideHintExamples")
     @DisplayName("hint is correct if the characters and points are in the correct position according to the attempt and the final word")
@@ -69,11 +83,11 @@ class FeedbackTest {
     }
 
     private static Stream<Arguments> provideHintExamples() {
-
+        //given
         String correctAnswer = "pasta";
         List<Character> previousHint = Arrays.asList('.', 'a', '.', '.', '.');
 
-
+        //when
         Feedback invalidFeedback = new Feedback("paasen", List.of(Mark.INVALID, Mark.INVALID, Mark.INVALID, Mark.INVALID, Mark.INVALID, Mark.INVALID));
         //should return:
         List<Character> invalidHint = Arrays.asList('.', 'a', '.', '.', '.');
@@ -86,6 +100,8 @@ class FeedbackTest {
         //should return:
         List<Character> correctHint = Arrays.asList('p', 'a', 's', 't', 'a');
 
+
+        //then
         return Stream.of(
                 Arguments.of(previousHint, invalidFeedback, correctAnswer, invalidHint),
                 Arguments.of(previousHint, presentFeedback, correctAnswer, presentHint),

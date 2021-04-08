@@ -2,6 +2,7 @@ package nl.hu.cisq1.lingo.trainer.domain;
 
 import nl.hu.cisq1.lingo.trainer.domain.enums.Mark;
 import nl.hu.cisq1.lingo.trainer.domain.exception.MaxGuessesReachedException;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,21 +25,35 @@ class RoundTest {
     @Test
     @DisplayName("hint should be automatically generated when a new round is created")
     void hintIsCreated(){
+        //given
         List<Character> desiredHint = Arrays.asList('s','.','.','.','.');
+        //when
+
+        //then
         assertEquals(desiredHint, round.getCurrentHint());
     }
 
     @Test
     @DisplayName("guess is valid if the lengths are equal")
     void guessIsValid() throws MaxGuessesReachedException {
+        //given
+
+        //when
         round.guess("stoel");
+
+        //then
         assertFalse(round.getFeedbackList().get(round.getFeedbackList().size()-1).isGuessInvalid());
     }
 
     @Test
     @DisplayName("guess is invalid if the lengths are not equal")
     void guessIsInvalid() throws MaxGuessesReachedException {
+        //given
+
+        //when
         round.guess("schoen");
+
+        //then
         assertTrue(round.getFeedbackList().get(round.getFeedbackList().size()-1).isGuessInvalid());
     }
 
@@ -74,5 +89,17 @@ class RoundTest {
             }
         }
         assertEquals(1, presentcount);
+    }
+
+    @Test
+    @DisplayName("equals tested by EqualsVerifier")
+    void equalsTrue(){
+        EqualsVerifier.simple().forClass(Round.class).verify();
+    }
+
+    @Test
+    @DisplayName("toString should return a formatted string")
+    void formattedString(){
+        assertEquals(round.toString(), "Round{id=null, correctWord='stoel', attempts=0, currentHint=[s, ., ., ., .], feedbackList=[]}");
     }
 }

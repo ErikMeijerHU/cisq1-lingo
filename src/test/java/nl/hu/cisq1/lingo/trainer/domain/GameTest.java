@@ -4,6 +4,7 @@ import nl.hu.cisq1.lingo.trainer.domain.enums.Status;
 import nl.hu.cisq1.lingo.trainer.domain.exception.MaxGuessesReachedException;
 import nl.hu.cisq1.lingo.trainer.domain.exception.NoOngoingGameException;
 import nl.hu.cisq1.lingo.trainer.domain.exception.OngoingRoundException;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ class GameTest {
     void guessWithOngoingGame() throws MaxGuessesReachedException {
         game.startGame("stoel");
         game.guess("staal");
-        assertEquals(Arrays.asList('s','t','.','.','l'), game.getRound().getCurrentHint());
+        assertEquals(Arrays.asList('s','t','.','.','l'), game.getRounds().get(game.getRounds().size()-1).getCurrentHint());
     }
 
     @Test
@@ -41,7 +42,8 @@ class GameTest {
     void scoreIncrease() throws MaxGuessesReachedException {
         game.startGame("stoel");
         game.guess("stoel");
-        assertTrue(game.getProgress().getScore() > 0);
+        System.out.println(game.getScore());
+        assertTrue(game.getScore() == 25);
     }
 
     @Test
@@ -70,16 +72,19 @@ class GameTest {
         game.startGame("stoel");
         game.guess("stoel");
         game.newRound("schoen");
-        assertEquals(game.getProgress().getWordLength(), 6);
+        assertEquals(game.getNextWordLength(), 7);
     }
 
     @Test
     @DisplayName("length of word should loop back around to 5 after reaching 7")
-    void wordLengthResetToFive() throws MaxGuessesReachedException {
-        game.startGame("scheren");
+    void nextWordLengthResetToFive() throws MaxGuessesReachedException {
+        game.startGame("stoel");
+        game.guess("stoel");
+        game.newRound("schoen");
+        game.guess("schoen");
+        game.newRound("scheren");
         game.guess("scheren");
-        game.newRound("stoel");
-        assertEquals(game.getProgress().getWordLength(), 5);
+        assertEquals(game.getNextWordLength(), 5);
     }
 
     @Test
@@ -107,5 +112,35 @@ class GameTest {
     void ongoingNewRound() {
         game.startGame("stoel");
         assertThrows(OngoingRoundException.class, () -> game.newRound("siroop"));
+    }
+
+    @Test
+    @DisplayName("get game by id should return ID")
+    void getGameId(){
+        game.startGame("stoel");
+        game.setId((long) 12);
+        assertEquals((long) 12, game.getId());
+    }
+
+    @Test
+    @DisplayName("round number should increase when new round starts")
+    void roundNumberIncrease(){
+        game.startGame("stoel");
+        game.guess("stoel");
+        game.newRound("schoen");
+        assertEquals(2, game.getRoundNumber());
+    }
+
+    @Test
+    @DisplayName("equals tested by EqualsVerifier")
+    void equalsTrue(){
+        EqualsVerifier.simple().forClass(Game.class).verify();
+    }
+
+    @Test
+    @DisplayName("toString should return a formatted string")
+    void formattedString(){
+        game.startGame("stoel");
+        assertEquals(game.toString(), "Game{id=null, status=PLAYING, rounds=[Round{id=null, correctWord='stoel', attempts=0, currentHint=[s, ., ., ., .], feedbackList=[]}], score=0, nextWordLength=6, roundNumber=1}");
     }
 }
