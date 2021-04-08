@@ -1,6 +1,7 @@
 package nl.hu.cisq1.lingo.trainer.domain;
 
 import nl.hu.cisq1.lingo.trainer.domain.enums.Mark;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -59,6 +60,19 @@ class FeedbackTest {
         Feedback feedback = new Feedback("woord", List.of(Mark.ABSENT, Mark.CORRECT, Mark.PRESENT, Mark.CORRECT, Mark.CORRECT));
         //then
         assertFalse(feedback.isGuessInvalid());
+    }
+
+    @Test
+    @DisplayName("equals tested by EqualsVerifier")
+    void equalsTrue(){
+        EqualsVerifier.simple().forClass(Feedback.class).verify();
+    }
+
+    @Test
+    @DisplayName("toString should return a formatted string")
+    void formattedString(){
+        Feedback feedback = new Feedback("woord", List.of(Mark.ABSENT, Mark.CORRECT, Mark.CORRECT, Mark.CORRECT, Mark.CORRECT));
+        assertEquals(feedback.toString(), "Feedback{id=null, attempt='woord', marks=[ABSENT, CORRECT, CORRECT, CORRECT, CORRECT]}");
     }
 
     @ParameterizedTest

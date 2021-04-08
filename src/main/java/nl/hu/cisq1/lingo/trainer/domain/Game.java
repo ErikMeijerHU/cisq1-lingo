@@ -1,5 +1,6 @@
 package nl.hu.cisq1.lingo.trainer.domain;
 
+
 import nl.hu.cisq1.lingo.trainer.domain.enums.Status;
 import nl.hu.cisq1.lingo.trainer.domain.exception.MaxGuessesReachedException;
 import nl.hu.cisq1.lingo.trainer.domain.exception.NoOngoingGameException;
@@ -8,12 +9,14 @@ import nl.hu.cisq1.lingo.trainer.domain.exception.OngoingRoundException;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 
 @Entity
 @Table(name = "game")
 public class Game {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO) //using this here and in round messes with ID's but it doesn't really affect anything
     private Long id;
     @Enumerated(EnumType.STRING)
     private Status status = Status.WAITING_FOR_ROUND;
@@ -22,7 +25,7 @@ public class Game {
     private List<Round> rounds = new ArrayList<>();
 
     private int score;
-    private int wordLength = 5;
+    private int nextWordLength = 6;
     private int roundNumber = 0;
 
     public Game() {
@@ -33,16 +36,15 @@ public class Game {
         this.status = Status.PLAYING;
         this.rounds.add(new Round(correctWord));
         roundNumber++;
-        this.wordLength = correctWord.length();
     }
 
-    public void guess(String attempt) throws MaxGuessesReachedException {
+    public void guess(String attempt){
         if(status == Status.PLAYING) {
             rounds.get(rounds.size()-1).guess(attempt);
             checkGameState();
         }
         else {
-            throw new NoOngoingGameException();
+            throw new NoOngoingGameException("No game is running!");
         }
     }
 
@@ -66,21 +68,25 @@ public class Game {
             nextRound();
             status = Status.PLAYING;
         }else if(status == Status.PLAYING) {
-            throw new OngoingRoundException();
+            throw new OngoingRoundException("There is already a round active!");
         }
         else {
-            throw new NoOngoingGameException();
+            throw new NoOngoingGameException("No game is running!");
         }
     }
 
     public void calculateScore(int attempts){
-        score = score + (5*5-attempts) + 5;
+        score = score + (5*(5-attempts) + 5);
     }
 
     public void nextRound(){
         roundNumber++;
-        if(wordLength < 7){wordLength++;}
-        else {wordLength =5;}
+        if(nextWordLength < 7){nextWordLength++;}
+        else {nextWordLength =5;}
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public List<Round> getRounds() {
@@ -95,7 +101,44 @@ public class Game {
         return score;
     }
 
-    public int getWordLength() {
-        return wordLength;
+    public int getNextWordLength() {
+        return nextWordLength;
+    }
+
+    public int getRoundNumber() {
+        return roundNumber;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Game game = (Game) o;
+        return score == game.score &&
+                nextWordLength == game.nextWordLength &&
+                roundNumber == game.roundNumber &&
+                status == game.status &&
+                Objects.equals(rounds, game.rounds);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(status, rounds, score, nextWordLength, roundNumber);
+    }
+
+    @Override
+    public String toString() {
+        return "Game{" +
+                "id=" + id +
+                ", status=" + status +
+                ", rounds=" + rounds +
+                ", score=" + score +
+                ", nextWordLength=" + nextWordLength +
+                ", roundNumber=" + roundNumber +
+                '}';
     }
 }

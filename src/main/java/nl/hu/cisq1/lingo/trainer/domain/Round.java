@@ -1,5 +1,6 @@
 package nl.hu.cisq1.lingo.trainer.domain;
 
+
 import nl.hu.cisq1.lingo.trainer.domain.enums.Mark;
 import nl.hu.cisq1.lingo.trainer.domain.exception.MaxGuessesReachedException;
 
@@ -9,11 +10,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+
 @Entity
 @Table(name = "round")
 public class Round {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO) //using this here and in game messes with ID's but it doesn't really affect anything
     private Long id;
 
     private String correctWord;
@@ -36,7 +38,7 @@ public class Round {
         //empty constructor for spring
     }
 
-    public void guess(String attempt) throws MaxGuessesReachedException {
+    public void guess(String attempt) {
         if (attempts < 5){
             Feedback feedback = generateFeedback(attempt);
             feedbackList.add(feedback);
@@ -45,7 +47,7 @@ public class Round {
             attempts++;
         }
         else{
-            throw new MaxGuessesReachedException();
+            throw new MaxGuessesReachedException("Max amount of guesses reached");
         }
     }
 
@@ -56,29 +58,33 @@ public class Round {
                 marks.add(Mark.CORRECT);
             }
         }
-        else if(correctWord.length()!=attempt.length()){ //TODO add check if word exists
+        else if(correctWord.length()!=attempt.length()){
             for(int i = 0; i < attempt.length(); i++){
                 marks.add(Mark.INVALID);
             }
         }
         else{
-            List<Character> lettersToGuess = new ArrayList<>();
+            List<Character> attemptLetters = new ArrayList<>();
+            List<Character> answerLetters = new ArrayList<>();
             for(int i = 0; i < correctWord.length(); i++){
-                lettersToGuess.add(correctWord.charAt(i));
+                answerLetters.add(correctWord.charAt(i));
+                attemptLetters.add(attempt.charAt(i));
             }
             for(int i = 0; i < correctWord.length(); i++){
                 if(attempt.charAt(i) == correctWord.charAt(i)){
                     marks.add(Mark.CORRECT);
-                    lettersToGuess.set(i, '.');
+                    attemptLetters.set(i, '.');
+                    answerLetters.set(i, '.');
                 }
                 else{
                     marks.add(Mark.ABSENT);
                 }
             }
-            for(int i = 0; i < lettersToGuess.size(); i++) {
-                if(lettersToGuess.contains(attempt.charAt(i))){
+            for(int i = 0; i < attemptLetters.size(); i++) {
+                if(answerLetters.get(i) != '.' && answerLetters.contains(attemptLetters.get(i))){
                     marks.set(i, Mark.PRESENT);
-                    lettersToGuess.remove(lettersToGuess.indexOf(attempt.charAt(i)));
+                    answerLetters.set(answerLetters.indexOf(attemptLetters.get(i)), '.');
+                    attemptLetters.set(i, '.');
                 }
             }
         }
@@ -99,27 +105,30 @@ public class Round {
         return attempts;
     }
 
-    //    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//        Round round = (Round) o;
-//        return attempts == round.attempts &&
-//                Objects.equals(correctWord, round.correctWord);
-//    }
-//
-//    @Override
-//    public String toString() {
-//        return "Round{" +
-//                "correctWord='" + correctWord + '\'' +
-//                ", attempts=" + attempts +
-//                '}';
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(correctWord, attempts);
-//    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Round round = (Round) o;
+        return attempts == round.attempts &&
+                Objects.equals(correctWord, round.correctWord) &&
+                Objects.equals(currentHint, round.currentHint) &&
+                Objects.equals(feedbackList, round.feedbackList);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(correctWord, attempts, currentHint, feedbackList);
+    }
 
+    @Override
+    public String toString() {
+        return "Round{" +
+                "id=" + id +
+                ", correctWord='" + correctWord + '\'' +
+                ", attempts=" + attempts +
+                ", currentHint=" + currentHint +
+                ", feedbackList=" + feedbackList +
+                '}';
+    }
 }

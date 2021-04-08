@@ -2,6 +2,7 @@ package nl.hu.cisq1.lingo.trainer.domain;
 
 import nl.hu.cisq1.lingo.trainer.domain.enums.Mark;
 import nl.hu.cisq1.lingo.trainer.domain.exception.MaxGuessesReachedException;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -88,5 +89,17 @@ class RoundTest {
             }
         }
         assertEquals(1, presentcount);
+    }
+
+    @Test
+    @DisplayName("equals tested by EqualsVerifier")
+    void equalsTrue(){
+        EqualsVerifier.simple().forClass(Round.class).verify();
+    }
+
+    @Test
+    @DisplayName("toString should return a formatted string")
+    void formattedString(){
+        assertEquals(round.toString(), "Round{id=null, correctWord='stoel', attempts=0, currentHint=[s, ., ., ., .], feedbackList=[]}");
     }
 }
