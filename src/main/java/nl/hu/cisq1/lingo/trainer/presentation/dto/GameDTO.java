@@ -21,4 +21,20 @@ public class GameDTO {
         this.hint = hint;
         this.feedbackList = feedbackList;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GameDTO gameDTO = (GameDTO) o;
+        return score == gameDTO.score &&
+                roundNumber == gameDTO.roundNumber &&
+                Objects.equals(hint, gameDTO.hint) &&
+                Objects.equals(feedbackList, gameDTO.feedbackList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(score, roundNumber, hint, feedbackList);
+    }
 }
