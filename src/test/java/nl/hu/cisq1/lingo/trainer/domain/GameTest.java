@@ -41,7 +41,7 @@ class GameTest {
     void scoreIncrease() throws MaxGuessesReachedException {
         game.startGame("stoel");
         game.guess("stoel");
-        assertTrue(game.getProgress().getScore() > 0);
+        assertTrue(game.getScore() > 0);
     }
 
     @Test
@@ -70,7 +70,7 @@ class GameTest {
         game.startGame("stoel");
         game.guess("stoel");
         game.newRound("schoen");
-        assertEquals(game.getProgress().getWordLength(), 6);
+        assertEquals(game.getWordLength(), 6);
     }
 
     @Test
@@ -79,7 +79,7 @@ class GameTest {
         game.startGame("scheren");
         game.guess("scheren");
         game.newRound("stoel");
-        assertEquals(game.getProgress().getWordLength(), 5);
+        assertEquals(game.getWordLength(), 5);
     }
 
     @Test

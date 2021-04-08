@@ -77,4 +77,12 @@ public class Game {
     public Status getStatus() {
         return status;
     }
+
+    public int getScore() {
+        return score;
+    }
+
+    public int getWordLength() {
+        return wordLength;
+    }
 }
