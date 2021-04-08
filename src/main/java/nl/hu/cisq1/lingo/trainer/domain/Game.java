@@ -8,15 +8,19 @@ import nl.hu.cisq1.lingo.trainer.domain.exception.OngoingRoundException;
 public class Game {
     private Status status = Status.WAITING_FOR_ROUND;
     private Round round;
-    private Progress progress;
+    private int score;
+    private int wordLength = 5;
+    private int roundNumber = 0;
 
-    public Game() {}
+    public Game() {
+        //TODO add comment here
+    }
 
     public void startGame(String correctWord){
         this.status = Status.PLAYING;
         this.round = new Round(correctWord);
-        this.progress = new Progress();
-        progress.setWordLength(correctWord.length());
+        roundNumber++;
+        this.wordLength = correctWord.length();
     }
 
     public void guess(String attempt) throws MaxGuessesReachedException {
@@ -32,7 +36,7 @@ public class Game {
     public Status checkGameState(){
         if(round.getFeedbackList().get(round.getFeedbackList().size()-1).isWordGuessed()){
             this.status = Status.WAITING_FOR_ROUND;
-            progress.calculateScore(round.getAttempts());
+            calculateScore(round.getAttempts());
         }
         else if (round.getAttempts()>=5){
             this.status = Status.ELIMINATED;
@@ -46,7 +50,7 @@ public class Game {
     public void newRound(String correctWord) {
         if(status == Status.WAITING_FOR_ROUND){
             round = new Round(correctWord);
-            progress.nextRound();
+            nextRound();
             status = Status.PLAYING;
         }else if(status == Status.PLAYING) {
             throw new OngoingRoundException();
@@ -56,12 +60,18 @@ public class Game {
         }
     }
 
-    public Round getRound() {
-        return round;
+    public void calculateScore(int attempts){
+        score = score + (5*5-attempts) + 5;
     }
 
-    public Progress getProgress() {
-        return progress;
+    public void nextRound(){
+        roundNumber++;
+        if(wordLength < 7){wordLength++;}
+        else {wordLength =5;}
+    }
+
+    public Round getRound() {
+        return round;
     }
 
     public Status getStatus() {

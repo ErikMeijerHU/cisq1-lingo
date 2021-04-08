@@ -24,21 +24,35 @@ class RoundTest {
     @Test
     @DisplayName("hint should be automatically generated when a new round is created")
     void hintIsCreated(){
+        //given
         List<Character> desiredHint = Arrays.asList('s','.','.','.','.');
+        //when
+
+        //then
         assertEquals(desiredHint, round.getCurrentHint());
     }
 
     @Test
     @DisplayName("guess is valid if the lengths are equal")
     void guessIsValid() throws MaxGuessesReachedException {
+        //given
+
+        //when
         round.guess("stoel");
+
+        //then
         assertFalse(round.getFeedbackList().get(round.getFeedbackList().size()-1).isGuessInvalid());
     }
 
     @Test
     @DisplayName("guess is invalid if the lengths are not equal")
     void guessIsInvalid() throws MaxGuessesReachedException {
+        //given
+
+        //when
         round.guess("schoen");
+
+        //then
         assertTrue(round.getFeedbackList().get(round.getFeedbackList().size()-1).isGuessInvalid());
     }
 

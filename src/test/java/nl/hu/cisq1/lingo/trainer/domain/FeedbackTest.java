@@ -69,11 +69,11 @@ class FeedbackTest {
     }
 
     private static Stream<Arguments> provideHintExamples() {
-
+        //given
         String correctAnswer = "pasta";
         List<Character> previousHint = Arrays.asList('.', 'a', '.', '.', '.');
 
-
+        //when
         Feedback invalidFeedback = new Feedback("paasen", List.of(Mark.INVALID, Mark.INVALID, Mark.INVALID, Mark.INVALID, Mark.INVALID, Mark.INVALID));
         //should return:
         List<Character> invalidHint = Arrays.asList('.', 'a', '.', '.', '.');
@@ -86,6 +86,8 @@ class FeedbackTest {
         //should return:
         List<Character> correctHint = Arrays.asList('p', 'a', 's', 't', 'a');
 
+
+        //then
         return Stream.of(
                 Arguments.of(previousHint, invalidFeedback, correctAnswer, invalidHint),
                 Arguments.of(previousHint, presentFeedback, correctAnswer, presentHint),
