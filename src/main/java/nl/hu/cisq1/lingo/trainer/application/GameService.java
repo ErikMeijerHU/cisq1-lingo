@@ -71,11 +71,9 @@ public class GameService {
         List<Character> currentHint = new ArrayList<>();
         List<Feedback> feedbackList = new ArrayList<>();
 
-        if (game.getRounds().size()>0){
-            Round round = game.getRounds().get(game.getRounds().size()-1);
-            feedbackList = round.getFeedbackList();
-            currentHint = round.getCurrentHint();
-        }
+        Round round = game.getRounds().get(game.getRounds().size()-1);
+        feedbackList = round.getFeedbackList();
+        currentHint = round.getCurrentHint();
 
         return new GameDTO(game.getId(), game.getScore(), game.getRoundNumber(), currentHint, feedbackList);
     }

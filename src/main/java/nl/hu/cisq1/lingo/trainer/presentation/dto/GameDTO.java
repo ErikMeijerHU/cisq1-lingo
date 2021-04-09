@@ -37,4 +37,15 @@ public class GameDTO {
     public int hashCode() {
         return Objects.hash(score, roundNumber, hint, feedbackList);
     }
+
+    @Override
+    public String toString() {
+        return "GameDTO{" +
+                "id=" + id +
+                ", score=" + score +
+                ", roundNumber=" + roundNumber +
+                ", hint=" + hint +
+                ", feedbackList=" + feedbackList +
+                '}';
+    }
 }
