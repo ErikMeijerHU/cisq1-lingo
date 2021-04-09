@@ -1,7 +1,11 @@
 package nl.hu.cisq1.lingo.trainer.application;
 
 import nl.hu.cisq1.lingo.trainer.data.SpringGameRepository;
+import nl.hu.cisq1.lingo.trainer.domain.Feedback;
 import nl.hu.cisq1.lingo.trainer.domain.Game;
+import nl.hu.cisq1.lingo.trainer.domain.enums.Mark;
+import nl.hu.cisq1.lingo.trainer.domain.exception.GameNotFoundException;
+import nl.hu.cisq1.lingo.trainer.domain.exception.WordDoesNotExistException;
 import nl.hu.cisq1.lingo.trainer.presentation.dto.GameDTO;
 import nl.hu.cisq1.lingo.words.data.SpringWordRepository;
 import nl.hu.cisq1.lingo.words.domain.Word;
@@ -12,6 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,9 +42,9 @@ public class GameServiceTest {
         GameDTO correctGameDTO = new GameDTO(null, 0, 1, Arrays.asList('s','.','.','.','.'), Collections.emptyList());
 
         when(this.wordRepository.findRandomWordByLength(5)).thenReturn(Optional.of(new Word("stoel")));
-        GameDTO game = this.gameService.startGame();
+        GameDTO gameDTO = this.gameService.startGame();
 
-        assertEquals(correctGameDTO, game);
+        assertEquals(correctGameDTO, gameDTO);
     }
 
     @Test
@@ -50,4 +55,68 @@ public class GameServiceTest {
     }
 
     @Test
+    @DisplayName("starting a new round returns expected DTO")
+    void newRoundCorrectDTO(){
+        Game game = new Game();
+        GameDTO correctGameDTO = new GameDTO(null, 0, 1, Arrays.asList('s','.','.','.','.','.'), Collections.emptyList());
+
+        when(this.gameRepository.findById(0L)).thenReturn(Optional.of(game));
+        when(this.wordRepository.findRandomWordByLength(6)).thenReturn(Optional.of(new Word("schoen")));
+
+        assertEquals(this.gameService.newRound(0L), correctGameDTO);
+    }
+
+    @Test
+    @DisplayName("starting a new round throws exception when word length unsupported")
+    void newRoundWordLength(){
+        Game game = new Game();
+        GameDTO correctGameDTO = new GameDTO(null, 0, 1, Arrays.asList('s','.','.','.','.','.'), Collections.emptyList());
+
+        when(this.gameRepository.findById((long) 0)).thenReturn(Optional.of(game));
+
+        assertThrows(WordLengthNotSupportedException.class, () -> this.gameService.newRound((long) 0));
+    }
+
+    @Test
+    @DisplayName("cannot start new round if no game was found")
+    void newRoundNoGame(){
+        assertThrows(GameNotFoundException.class, () -> this.gameService.newRound((long) 0));
+    }
+
+    @Test
+    @DisplayName("guessing a word returns correct DTO")
+    void guessCorrectDTO(){
+        Game game = new Game();
+
+        Feedback correctFeedback = new Feedback("schaar", Arrays.asList(Mark.CORRECT, Mark.CORRECT, Mark.CORRECT, Mark.ABSENT, Mark.ABSENT, Mark.ABSENT));
+        GameDTO correctGameDTO = new GameDTO(null, 0, 1, Arrays.asList('s','c','h','.','.', '.'), Arrays.asList(correctFeedback));
+
+        when(this.gameRepository.findById((long) 0)).thenReturn(Optional.of(game));
+        when(this.wordRepository.findRandomWordByLength(6)).thenReturn(Optional.of(new Word("schoen")));
+        when(this.wordRepository.findWordByValue("schaar")).thenReturn(Optional.of(new Word("schaar")));
+        this.gameService.newRound((long) 0);
+
+        assertEquals(this.gameService.guess(0L, "schaar"), correctGameDTO);
+    }
+
+    @Test
+    @DisplayName("guessing a word that does not exists throws exception")
+    void guessWordNotExists(){
+        Game game = new Game();
+        when(this.gameRepository.findById((long) 0)).thenReturn(Optional.of(game));
+        assertThrows(WordDoesNotExistException.class, () -> this.gameService.guess(0L, "staal"));
+    }
+
+    @Test
+    @DisplayName("guessing a word should not work if no game was found")
+    void guessWithoutGame(){
+        assertThrows(GameNotFoundException.class, () -> this.gameService.guess(0L, "staal"));
+    }
+
+    @Test
+    @DisplayName("toString should return a formatted string")
+    void formattedString(){
+        GameDTO gameDTO = new GameDTO(null, 0, 2, Arrays.asList('s','.','.','.','.', '.'), Collections.emptyList());
+        assertEquals(gameDTO.toString(), "GameDTO{id=null, score=0, roundNumber=2, hint=[s, ., ., ., ., .], feedbackList=[]}");
+    }
 }
