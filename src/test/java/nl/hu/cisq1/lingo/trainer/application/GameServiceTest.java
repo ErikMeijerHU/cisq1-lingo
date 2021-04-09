@@ -5,6 +5,7 @@ import nl.hu.cisq1.lingo.trainer.domain.Game;
 import nl.hu.cisq1.lingo.trainer.presentation.dto.GameDTO;
 import nl.hu.cisq1.lingo.words.data.SpringWordRepository;
 import nl.hu.cisq1.lingo.words.domain.Word;
+import nl.hu.cisq1.lingo.words.domain.exception.WordLengthNotSupportedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,5 +42,12 @@ public class GameServiceTest {
         assertEquals(correctGameDTO, game);
     }
 
+    @Test
+    @DisplayName("word of unsupported length throws exception")
+    void unsupportedWordLength(){
+        //this test works because mock repository gives a word with length of 0
+        assertThrows(WordLengthNotSupportedException.class, () -> this.gameService.startGame());
+    }
 
+    @Test
 }
