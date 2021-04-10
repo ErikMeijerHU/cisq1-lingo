@@ -29,8 +29,7 @@ public class GameServiceTest {
     private SpringWordRepository wordRepository;
 
     @BeforeEach
-    void init()
-    {
+    void init(){
         this.gameRepository = mock(SpringGameRepository.class);
         this.wordRepository = mock(SpringWordRepository.class);
         this.gameService = new GameService(this.gameRepository, this.wordRepository);
@@ -87,16 +86,15 @@ public class GameServiceTest {
     @DisplayName("guessing a word returns correct DTO")
     void guessCorrectDTO(){
         Game game = new Game();
-
-        Feedback correctFeedback = new Feedback("schaar", Arrays.asList(Mark.CORRECT, Mark.CORRECT, Mark.CORRECT, Mark.ABSENT, Mark.ABSENT, Mark.ABSENT));
-        GameDTO correctGameDTO = new GameDTO(null, 0, 1, Arrays.asList('s','c','h','.','.', '.'), Arrays.asList(correctFeedback));
+        game.startGame("stoel");
+        
+        Feedback correctFeedback = new Feedback("staal", Arrays.asList(Mark.CORRECT, Mark.CORRECT, Mark.ABSENT, Mark.ABSENT, Mark.CORRECT));
+        GameDTO correctGameDTO = new GameDTO(null, 0, 1, Arrays.asList('s','t','.','.', 'l'), Arrays.asList(correctFeedback));
 
         when(this.gameRepository.findById((long) 0)).thenReturn(Optional.of(game));
-        when(this.wordRepository.findRandomWordByLength(6)).thenReturn(Optional.of(new Word("schoen")));
-        when(this.wordRepository.findWordByValue("schaar")).thenReturn(Optional.of(new Word("schaar")));
-        this.gameService.newRound((long) 0);
+        when(this.wordRepository.findWordByValue("staal")).thenReturn(Optional.of(new Word("staal")));
 
-        assertEquals(this.gameService.guess(0L, "schaar"), correctGameDTO);
+        assertEquals(this.gameService.guess(0L, "staal"), correctGameDTO);
     }
 
     @Test
