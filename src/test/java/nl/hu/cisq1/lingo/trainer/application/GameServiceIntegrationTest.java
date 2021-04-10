@@ -29,6 +29,9 @@ public class GameServiceIntegrationTest {
     private SpringGameRepository gameRepository;
 
     @Autowired
+    private SpringWordRepository wordRepository;
+
+    @Autowired
     private GameService service;
 
     private Game game;
